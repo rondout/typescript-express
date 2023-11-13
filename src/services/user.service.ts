@@ -6,8 +6,6 @@ const userService = {
     return UserDao.findUser();
   },
   async insertUser(data: BaseUserInfo) {
-    console.log({ data });
-
     return new UserFactory(
       data.username,
       data.age,
@@ -15,6 +13,9 @@ const userService = {
       data._id,
       data.password
     ).insertToDb();
+  },
+  async updateUser(data: BaseUserInfo) {
+    return UserDao.updateUser(data);
   },
 };
 

@@ -1,5 +1,7 @@
 import { Router } from "express";
 import userService from "../services/user.service";
+import { send } from "process";
+import { userModel } from "../db/users/user.dao";
 const userRouter = Router();
 
 userRouter.get("/", async (req, res) => {
@@ -13,8 +15,21 @@ userRouter.post("/", async (req, res) => {
   res.send(result);
 });
 
-userRouter.use("/err", (_, res) => {
-  throw new Error("User Router Error");
+userRouter.put("/", async (req, res) => {
+  // try {
+  const result = await userService.updateUser(req.body);
+  res.send(result);
+  // } catch (error) {
+  //   console.log("ERRORED");
+  // }
+  //   .catch((err) => {
+  //     res.send(err);
+  //     throw new Error(err);
+  //   });
+});
+
+userRouter.use("/err", async (_, res) => {
+  throw new Error("User Router Error ");
 });
 
 userRouter.get("/:id", (req, res) => {

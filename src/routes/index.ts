@@ -8,8 +8,12 @@ export const notFoundHandler: Router = Router().use((req, res) => {
 });
 
 // @ts-ignore
-export const errorHandler = function (err, req, res) {
-  res.status(500).json({ err: err.stack });
+export const errorHandler = function (err, req, res, next) {
+  try {
+    res.status(501).send({ err: err.stack });
+  } catch (error) {
+    res.status(501).send(err);
+  }
 };
 
 export const registRoute = (app: Express) => {

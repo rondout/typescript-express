@@ -10,13 +10,17 @@ export const UserSchema = new Schema({
 
 export const userModel = model("users", UserSchema);
 
-export class UserDao {
-  static findUser = async () => {
+export const UserDao = {
+  async findUser() {
     const user = await userModel.find({});
     return user;
-  };
-  public static insertUser = async (user: BaseUserInfo) => {
+  },
+  async insertUser(user: BaseUserInfo) {
     const result = await userModel.insertMany([user]);
     return result;
-  };
-}
+  },
+  async updateUser(user: BaseUserInfo) {
+    const result = await userModel.updateOne({ _id: user._id }, user);
+    return result;
+  },
+};
