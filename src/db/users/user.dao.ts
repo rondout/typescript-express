@@ -1,5 +1,6 @@
 import { BaseUserInfo } from "../../models/user.model";
 import { Schema, model } from "mongoose";
+import { BaseObject } from "../../models/index.model";
 
 export const UserSchema = new Schema({
   username: { type: String, require: true },
@@ -26,5 +27,8 @@ export const UserDao = {
   async removeUser(_id: string) {
     const result = await userModel.deleteOne({ _id });
     return result;
+  },
+  async matchUser<T extends BaseObject = any>(query: T) {
+    return await userModel.find(query);
   },
 };

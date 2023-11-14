@@ -2,6 +2,7 @@ import { DeleteResult } from "mongodb";
 
 export enum RespCode {
   SUCCESS = 200,
+  FAILED = 400,
   NOT_FOUND = 404,
   UNAUTHORIZED = 401,
   NO_ACCESS = 403,

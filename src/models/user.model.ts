@@ -1,5 +1,5 @@
 import { UserDao } from "../db/users/user.dao";
-import { BaseData, Id } from "./index.model";
+import { BaseData, BaseObject, Id } from "./index.model";
 
 export enum UserGender {
   MALE = "MALE",
@@ -31,4 +31,9 @@ export class UserFactory implements BaseUserInfo {
     const insertResult = await UserDao.insertUser(this.userInfo);
     console.log("user插入到数据库成功", insertResult);
   }
+}
+
+export interface LoginParams extends BaseObject {
+  username: string;
+  password: string;
 }
