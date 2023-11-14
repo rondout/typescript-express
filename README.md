@@ -15,7 +15,7 @@ pnpm add ts-node nodemon @types/node @types/express -D
 
 ## 配置 nodemon
 
-在根目录创建`nodemon.json`:
+在根目录创建`nodemon.json`来配置 nodemon:
 
 ```json
 {

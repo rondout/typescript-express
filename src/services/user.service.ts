@@ -17,6 +17,12 @@ const userService = {
   async updateUser(data: BaseUserInfo) {
     return UserDao.updateUser(data);
   },
+  async deleteUser(_id: string) {
+    return await UserDao.removeUser(_id);
+  },
+  async deleteUsers(_ids: string[]) {
+    return await Promise.all(_ids.map((_id) => this.deleteUser(_id)));
+  },
 };
 
 export default userService;

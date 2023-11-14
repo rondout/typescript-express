@@ -1,11 +1,9 @@
 import { Router } from "express";
 import userService from "../services/user.service";
-import { send } from "process";
-import { userModel } from "../db/users/user.dao";
+import { DeleteResponse } from "../models/response.model";
 const userRouter = Router();
 
 userRouter.get("/", async (req, res) => {
-  // res.send("get users");
   const users = await userService.getUsers();
   res.send(users);
 });
@@ -16,16 +14,13 @@ userRouter.post("/", async (req, res) => {
 });
 
 userRouter.put("/", async (req, res) => {
-  // try {
   const result = await userService.updateUser(req.body);
   res.send(result);
-  // } catch (error) {
-  //   console.log("ERRORED");
-  // }
-  //   .catch((err) => {
-  //     res.send(err);
-  //     throw new Error(err);
-  //   });
+});
+
+userRouter.delete("/:_id", async (req, res) => {
+  const result = await userService.deleteUsers([req.params._id]);
+  res.send(new DeleteResponse(result, 1).response);
 });
 
 userRouter.use("/err", async (_, res) => {

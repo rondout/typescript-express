@@ -23,4 +23,8 @@ export const UserDao = {
     const result = await userModel.updateOne({ _id: user._id }, user);
     return result;
   },
+  async removeUser(_id: string) {
+    const result = await userModel.deleteOne({ _id });
+    return result;
+  },
 };

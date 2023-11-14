@@ -10,9 +10,9 @@ export const notFoundHandler: Router = Router().use((req, res) => {
 // @ts-ignore
 export const errorHandler = function (err, req, res, next) {
   try {
-    res.status(501).send({ err: err.stack });
+    res.status(500).send({ err: err.stack });
   } catch (error) {
-    res.status(501).send(err);
+    res.status(500).send(err);
   }
 };
 
