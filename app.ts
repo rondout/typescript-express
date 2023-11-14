@@ -1,6 +1,6 @@
 console.log("Hellow Typescript!");
 import express from "express";
-require("express-async-errors");
+import "express-async-errors";
 import "./src/db/index";
 import { registRoute } from "./src/routes/index";
 import bodyParser from "body-parser";
