@@ -6,6 +6,35 @@
     <title>Index</title>
   </head>
   <body>
-    <h1>This is the inde page</h1>
+    <h1>This is the index page</h1>
+    <div style="width: 200px; height: 200px; background-color: red">
+      <button>捕获</button>
+      <button>冒泡</button>
+    </div>
+    <script>
+      const btn1 = document.querySelector("button");
+      const btn2 = document.querySelector("button+button");
+      const container = document.querySelector("div");
+
+      btn1.addEventListener(
+        "click",
+        function (ev) {
+          console.log("捕获按钮点击", ev);
+        },
+        true
+      );
+
+      btn2.addEventListener(
+        "click",
+        function (ev) {
+          console.log("冒泡按钮点击", ev);
+        },
+        false
+      );
+
+      container.addEventListener("click", function (ev) {
+        console.log("外层容器点击", ev);
+      });
+    </script>
   </body>
 </html>
