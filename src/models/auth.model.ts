@@ -1,9 +1,56 @@
+import authService from "../services/auth.service";
+import { BaseData, Id } from "./index.model";
 import { BaseResponse, RespCode } from "./response.model";
-import { BaseUserInfo } from "./user.model";
 
-export class LoginResult extends BaseResponse {
-  constructor(user: BaseUserInfo) {
-    const code = user ? RespCode.SUCCESS : RespCode.FAILED;
-    super(!!user, user, code);
+export const HEADER_TOKEN_KEY = "Authorization";
+
+export interface AuthConfigInfo extends BaseData<Id> {
+  route: string;
+  authorities?: Authority[];
+}
+
+export class LoginResult<T = any> extends BaseResponse<T> {
+  constructor(data: T) {
+    const code = data ? RespCode.SUCCESS : RespCode.FAILED;
+    super(data, !!data, code);
+  }
+}
+
+export const WHITE_LIST_ROUTES = ["/api/auth/login"];
+
+export const isWhiteList = (route: string) => {
+  return WHITE_LIST_ROUTES.includes(route);
+};
+
+export enum Authority {
+  ADMIN = "ADMIN",
+  USER = "USER",
+}
+
+/**
+ * @param {boolean} initFinish 表示是否初始化完成，一般来说，应用已启动就需要把auth配置从数据库读取到内存，以避免重复读取数据库带来的性能问题
+ * @description 路由权限管理
+ */
+
+export class AuthConfig {
+  public authRouteMap = new Map<string, Authority[]>([]);
+  public initFinish = false;
+  // 这边准备把权限和接口的映射存在数据库里面
+  constructor() {
+    this.init();
+  }
+
+  private async init() {
+    this.initFinish = false;
+    await this.getAuthConfig();
+    this.initFinish = true;
+  }
+
+  public async getAuthConfig() {
+    const authList = await authService.getAllAuthData();
+    console.log("获取到了所有的auth列表");
+    authList.data.forEach((auth) => {
+      this.authRouteMap.set(auth.route, auth.authorities);
+    });
   }
 }

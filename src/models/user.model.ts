@@ -1,4 +1,5 @@
 import { UserDao } from "../db/users/user.dao";
+import { Authority } from "./auth.model";
 import { BaseData, BaseObject, Id } from "./index.model";
 
 export enum UserGender {
@@ -11,6 +12,7 @@ export interface BaseUserInfo extends BaseData<Id> {
   password?: string;
   age: number;
   gender: UserGender;
+  authority: Authority;
 }
 
 export class UserFactory implements BaseUserInfo {
@@ -18,13 +20,14 @@ export class UserFactory implements BaseUserInfo {
     public username: string,
     public age: number,
     public gender: UserGender,
+    public authority: Authority,
     public _id?: Id,
     public password?: string
   ) {}
 
   public get userInfo(): BaseUserInfo {
-    const { username, password, age, gender, _id } = this;
-    return { username, password, age, gender, _id };
+    const { username, password, age, gender, _id, authority } = this;
+    return { username, password, age, gender, _id, authority };
   }
 
   public async insertToDb() {
