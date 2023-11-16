@@ -1,5 +1,5 @@
-import { LoginParams } from "../models/user.model";
-import { LoginResult } from "../models/auth.model";
+import { BaseUserInfo, LoginParams } from "../models/user.model";
+import { Authority, LoginResult } from "../models/auth.model";
 import { UserDao } from "../db/users/user.dao";
 import { generateToken } from "../utils";
 import { AuthDao } from "../db/config/auth.dao";
@@ -16,9 +16,10 @@ const authService = {
       return new LoginResult(null);
     }
     const users = await UserDao.matchUser(data);
-    if (users && users[0]) {
-      const { username, age, gender } = users[0];
-      const token = generateToken({ username, age, gender });
+    const user = (users && users[0]) as any as BaseUserInfo;
+    if (user) {
+      const { username, age, gender, authority = Authority.USER } = user;
+      const token = generateToken({ username, age, gender, authority });
       return new LoginResult({ token });
     }
     return new LoginResult(null);

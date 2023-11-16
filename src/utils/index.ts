@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { BaseObject } from "../models/index.model";
+import { TokenParams } from "models/auth.model";
 
 export const SECRET_KEY = "hanshufei_secret_key";
 
@@ -12,7 +12,7 @@ export const TOKEN_INVALID_TIME = 24 * 60 * 60;
  * @returns {string} token
  * @description 生成token
  */
-export function generateToken(payload: BaseObject) {
+export function generateToken(payload: TokenParams): string {
   const token = jwt.sign(payload, SECRET_KEY, {
     expiresIn: TOKEN_INVALID_TIME,
   });

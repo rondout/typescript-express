@@ -1,6 +1,7 @@
 import authService from "../services/auth.service";
 import { BaseData, Id } from "./index.model";
 import { BaseResponse, RespCode } from "./response.model";
+import { UserGender } from "./user.model";
 
 export const HEADER_TOKEN_KEY = "Authorization";
 
@@ -27,6 +28,14 @@ export enum Authority {
   USER = "USER",
 }
 
+export const All_AUTHORITY = [Authority.ADMIN, Authority.USER];
+
+export interface TokenParams {
+  username: string;
+  age: number;
+  gender: UserGender;
+  authority: Authority;
+}
 /**
  * @param {boolean} initFinish 表示是否初始化完成，一般来说，应用已启动就需要把auth配置从数据库读取到内存，以避免重复读取数据库带来的性能问题
  * @description 路由权限管理
