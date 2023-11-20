@@ -18,10 +18,20 @@ import {
 import { resolve } from "path";
 import { BaseObject } from "models/index.model";
 
+/**
+ * @description 404 handler
+ */
 export const notFoundHandler: Router = Router().use((req, res) => {
   res.status(404).sendFile(resolve(__dirname, "../../public/404.html"));
 });
 
+/**
+ *
+ * @param err
+ * @param req
+ * @param res
+ * @description 错误处理handler
+ */
 export const errorHandler: ErrorRequestHandler = function (
   err,
   req,
@@ -35,6 +45,14 @@ export const errorHandler: ErrorRequestHandler = function (
   }
 };
 
+/**
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ * @description 登录认证handler
+ */
 export const authHandler: RequestHandler = (req, res, next) => {
   const token = req.headers[HEADER_TOKEN_KEY.toLowerCase()] as string;
   if (isWhiteList(req.url)) {
@@ -81,6 +99,11 @@ declare module "express" {
   }
 }
 
+/**
+ *
+ * @param {Authority[]} authorities 该接口需要的权限，默认是全部用户
+ * @description 权限控制handler
+ */
 export const permissionHandler: PermissionHandler = (
   req,
   res,
@@ -102,11 +125,11 @@ export const permissionHandler: PermissionHandler = (
 
 /**
  *
- * @param {Authority[]} authorities 该接口需要的权限
+ * @param {Authority[]} authorities 该接口需要的权限，默认（不传或传undefined）是全部用户
  * @returns {RequestHandler} 返回express的handler
  */
 export const PermissionRequire = (
-  authorities: Authority[] = All_AUTHORITY
+  ...authorities: Authority[]
 ): RequestHandler => {
   const handler: RequestHandler = (req, _res, next) =>
     permissionHandler(req, _res, next, authorities);

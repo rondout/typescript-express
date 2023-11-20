@@ -1,4 +1,4 @@
-# express 登录鉴权
+# express 登录鉴权以及不同级别的权限控制
 
 ## 理解 handler
 
@@ -84,6 +84,69 @@ export const authHandler: RequestHandler = (req, res, next) => {
 比如上面的这个 `handler`， 我们可以使用 `jtw.verify` 方法来判断用户传来的 `token` 是否合法，只有携带合法的 `token` 才会进入下一个 handler，如果 token 不合法，就返回 `401` 状态并且返回失败的请求。
 我们还可以再一进来的时候先判断白名单（毕竟不是所有的路由都需要权限的）。
 
+## 不同级别的权限控制
+
+通过上面的内容，我们现在可以实现接口的登录拦截，但是如果我们系统中的不同操作需要涉及到不同级别的权限，我们就需要更加精细的去控制每个接口的权限级别，然而如果我们在每个接口的业务逻辑里面去重复的写判断权限的逻辑是非常繁琐且不好统一控制的。因此，同样的，利用 `express` 的 `handler`，我们可以在每个需要特殊控制权限接口的路由里面增加一个`handler`，比如下面的这个例子：
+
+```ts
+userRouter.delete(
+  "/:_id",
+  PermissionRequire(Authority.ADMIN),
+  async (req, res) => {
+    const result = await userService.deleteUsers([req.params._id]);
+    res.send(new DeleteResponse(result, 1).response);
+  }
+);
+```
+
+**注意：PermissionRequire 方法这里的参数是通过剩余参数（...rest）的方式接受的，因此这里并非传入数组而是依次传入就好**
+
+在上面这个接口中，我们可以看出这应该是一个删除用户的操作，在这个系统中，删除用户是一个敏感且需要高级别权限的操作，因此我们通过加入 `PermissionRequire`这个方法返回的 `handler` 并传入需要的权限的列表，来控制该接口，我们再这个 handler 里面去统一做权限判断的逻辑，以及统一处理权限不足的错误。该方法和对应返回的`handler`示例如下：
+
+```ts
+// PermissionRequire 方法
+/**
+ *
+ * @param {Authority[]} authorities 该接口需要的权限，默认（不传或传undefined）是全部用户
+ * @returns {RequestHandler} 返回express的handler
+ */
+export const PermissionRequire = (
+  ...authorities: Authority[]
+): RequestHandler => {
+  const handler: RequestHandler = (req, _res, next) =>
+    permissionHandler(req, _res, next, authorities);
+  return handler;
+};
+```
+
+下面是 handler 的具体实现：
+
+```ts
+/**
+ *
+ * @param {Authority[]} authorities 该接口需要的权限，默认是全部用户
+ * @description 权限控制handler
+ */
+export const permissionHandler: PermissionHandler = (
+  req,
+  res,
+  next,
+  authorities = All_AUTHORITY
+) => {
+  const token = req.headers[HEADER_TOKEN_KEY.toLowerCase()] as string;
+  jwt.verify(token, SECRET_KEY, function (err, decoded) {
+    const tokenParams = decoded as TokenParams;
+    if (authorities.includes(tokenParams.authority)) {
+      next();
+    } else {
+      res
+        .status(RespCode.NO_ACCESS)
+        .send(new BaseResponse("No access", false, RespCode.NO_ACCESS));
+    }
+  });
+};
+```
+
 ## 总结
 
-按照上述的方式，我们就完成了 `express` 搭建的后台应用的登录和接口鉴权操作。
+按照上述的方式，我们就完成了 `express` 搭建的后台应用的登录和接口鉴权操作，以及做到了接口级别的权限控制。

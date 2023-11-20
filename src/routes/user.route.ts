@@ -22,7 +22,7 @@ userRouter.put("/", async (req, res) => {
 
 userRouter.delete(
   "/:_id",
-  PermissionRequire([Authority.ADMIN]),
+  PermissionRequire(Authority.ADMIN),
   async (req, res) => {
     const result = await userService.deleteUsers([req.params._id]);
     res.send(new DeleteResponse(result, 1).response);

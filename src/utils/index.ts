@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { TokenParams } from "models/auth.model";
+import { TokenParams } from "../models/auth.model";
 
 export const SECRET_KEY = "hanshufei_secret_key";
 
