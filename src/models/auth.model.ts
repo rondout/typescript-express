@@ -24,8 +24,11 @@ export const isWhiteList = (route: string) => {
   return WHITE_LIST_ROUTES.includes(route);
 };
 
+// 权限枚举
 export enum Authority {
+  // 管理员
   ADMIN = "ADMIN",
+  // 用户
   USER = "USER",
 }
 
@@ -58,7 +61,6 @@ export class AuthConfig {
 
   public async getAuthConfig() {
     const authList = await authService.getAllAuthData();
-    console.log("获取到了所有的auth列表");
     authList.data.forEach((auth) => {
       this.authRouteMap.set(auth.route, auth.authorities);
     });

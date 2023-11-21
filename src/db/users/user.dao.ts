@@ -13,8 +13,8 @@ export const UserSchema = new Schema({
 export const userModel = model("users", UserSchema);
 
 export const UserDao = {
-  async findUser() {
-    const user = await userModel.find({});
+  async findUser(data: BaseUserInfo = {} as BaseUserInfo) {
+    const user = await userModel.find(data);
     return user;
   },
   async insertUser(user: BaseUserInfo) {

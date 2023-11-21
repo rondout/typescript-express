@@ -1,4 +1,5 @@
 import { DeleteResult } from "mongodb";
+import { ErrorCode } from "./error.model";
 
 export enum RespCode {
   SUCCESS = 200,
@@ -15,6 +16,17 @@ export class BaseResponse<T = any> {
     public success: boolean = true,
     public code = RespCode.SUCCESS
   ) {}
+}
+/**
+ * @description 失败的业务返回格式
+ */
+export class BaseFailureResponse extends BaseResponse<{
+  errCode: ErrorCode;
+  errMsg: string;
+}> {
+  constructor(errCode: ErrorCode, errMsg?: string) {
+    super({ errCode, errMsg }, false, RespCode.FAILED);
+  }
 }
 
 /**

@@ -10,9 +10,9 @@ export enum UserGender {
 export interface BaseUserInfo extends BaseData<Id> {
   username: string;
   password?: string;
-  age: number;
-  gender: UserGender;
-  authority: Authority;
+  age?: number;
+  gender?: UserGender;
+  authority?: Authority;
 }
 
 export class UserFactory implements BaseUserInfo {
