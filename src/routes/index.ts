@@ -1,22 +1,18 @@
-import { Express, Router } from "express";
-import { resolve } from "path";
+import { Express } from "express";
 import userRouter from "./user.route";
 import indexRouter from "./index.route";
-
-export const notFoundHandler: Router = Router().use((req, res) => {
-  res.status(404).sendFile(resolve(__dirname, "../../public/404.html"));
-});
-
-// @ts-ignore
-export const errorHandler = function (err, req, res, next) {
-  try {
-    res.status(500).send({ err: err.stack });
-  } catch (error) {
-    res.status(500).send(err);
-  }
-};
+import authRouter from "./auth.route";
+import {
+  authHandler,
+  errorHandler,
+  mainHandler,
+  notFoundHandler,
+} from "./handlers";
 
 export const registRoute = (app: Express) => {
+  app.use(mainHandler);
+  app.use(authHandler);
+  app.use("/api/auth", authRouter);
   app.use("/api/user", userRouter);
   app.use("/api", indexRouter);
   app.use("*", notFoundHandler);

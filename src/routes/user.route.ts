@@ -1,6 +1,8 @@
 import { Router } from "express";
 import userService from "../services/user.service";
 import { DeleteResponse } from "../models/response.model";
+import { PermissionRequire } from "./handlers";
+import { Authority } from "../models/auth.model";
 const userRouter = Router();
 
 userRouter.get("/", async (req, res) => {
@@ -18,10 +20,14 @@ userRouter.put("/", async (req, res) => {
   res.send(result);
 });
 
-userRouter.delete("/:_id", async (req, res) => {
-  const result = await userService.deleteUsers([req.params._id]);
-  res.send(new DeleteResponse(result, 1).response);
-});
+userRouter.delete(
+  "/:_id",
+  PermissionRequire(Authority.ADMIN),
+  async (req, res) => {
+    const result = await userService.deleteUsers([req.params._id]);
+    res.send(new DeleteResponse(result, 1).response);
+  }
+);
 
 userRouter.use("/err", async (_, res) => {
   throw new Error("User Router Error ");

@@ -1,18 +1,20 @@
 import { BaseUserInfo } from "../../models/user.model";
 import { Schema, model } from "mongoose";
+import { BaseObject } from "../../models/index.model";
 
 export const UserSchema = new Schema({
   username: { type: String, require: true },
   password: String,
   age: Number,
   gender: String,
+  authority: String,
 });
 
 export const userModel = model("users", UserSchema);
 
 export const UserDao = {
-  async findUser() {
-    const user = await userModel.find({});
+  async findUser(data: BaseUserInfo = {} as BaseUserInfo) {
+    const user = await userModel.find(data);
     return user;
   },
   async insertUser(user: BaseUserInfo) {
@@ -26,5 +28,8 @@ export const UserDao = {
   async removeUser(_id: string) {
     const result = await userModel.deleteOne({ _id });
     return result;
+  },
+  async matchUser<T extends BaseObject = any>(query: T) {
+    return await userModel.find(query);
   },
 };

@@ -2,6 +2,7 @@ import { DB_PATH } from "../models/config.model";
 import mongoose, { Mongoose } from "mongoose";
 import { UserDao } from "./users/user.dao";
 import { UserFactory, UserGender } from "../models/user.model";
+import { Authority } from "../models/auth.model";
 
 export class DbConnection {
   public mongoose: Mongoose;
@@ -16,6 +17,7 @@ export class DbConnection {
     } catch (error) {}
   }
 
+  // 链接数据库
   private async connectDb() {
     try {
       this.mongoose = await mongoose.connect(this.dbPath);
@@ -28,7 +30,7 @@ export class DbConnection {
       }
     }
   }
-
+  // 查看数据库有没有初始化默认用户，如果没有就先插入
   private async checkDefaultUser() {
     const findUserResult = await UserDao.findUser();
     if (!findUserResult?.length) {
@@ -37,8 +39,8 @@ export class DbConnection {
         "root",
         18,
         UserGender.MALE,
-        undefined,
-        "123"
+        Authority.USER,
+        "root"
       ).insertToDb();
     }
   }
