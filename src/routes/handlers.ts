@@ -6,17 +6,27 @@ import {
   isWhiteList,
 } from "../models/auth.model";
 import { BaseResponse, RespCode } from "../models/response.model";
-import jwt from "jsonwebtoken";
-import { SECRET_KEY } from "../utils";
+import jwt, { VerifyErrors } from "jsonwebtoken";
+import { SECRET_KEY, parseUserFromToken } from "../utils";
 import { version } from "../config/config.json";
 import {
   ErrorRequestHandler,
   PermissionHandler,
   RequestHandler,
   Router,
+  Express,
 } from "express";
 import { resolve } from "path";
 import { BaseObject } from "models/index.model";
+import cors from "cors";
+
+export const registCors = (app: Express) => {
+  app.use(
+    cors({
+      origin: ["http://localhost:3000"],
+    })
+  );
+};
 
 /**
  * @description 404 handler
@@ -53,7 +63,7 @@ export const errorHandler: ErrorRequestHandler = function (
  * @returns
  * @description 登录认证handler
  */
-export const authHandler: RequestHandler = (req, res, next) => {
+export const authHandler: RequestHandler = async (req, res, next) => {
   const token = req.headers[HEADER_TOKEN_KEY.toLowerCase()] as string;
   if (isWhiteList(req.url)) {
     next();
@@ -62,15 +72,20 @@ export const authHandler: RequestHandler = (req, res, next) => {
   if (!token) {
     res.status(RespCode.UNAUTHORIZED).send("Unauthorized");
   } else {
-    jwt.verify(token, SECRET_KEY, function (err, decoded) {
-      if (err) {
-        res
-          .status(RespCode.UNAUTHORIZED)
-          .send(new BaseResponse(err.message, false, RespCode.UNAUTHORIZED));
-      } else {
-        next();
-      }
-    });
+    try {
+      await parseUserFromToken(token);
+      next();
+    } catch (error: any) {
+      res
+        .status(RespCode.UNAUTHORIZED)
+        .send(
+          new BaseResponse(
+            (error as VerifyErrors).message,
+            false,
+            RespCode.UNAUTHORIZED
+          )
+        );
+    }
   }
 };
 

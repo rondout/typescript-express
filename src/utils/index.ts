@@ -18,3 +18,15 @@ export function generateToken(payload: TokenParams): string {
   });
   return token;
 }
+
+export function parseUserFromToken(token: string): Promise<TokenParams> {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, SECRET_KEY, function (err, decoded) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(decoded as TokenParams);
+      }
+    });
+  });
+}

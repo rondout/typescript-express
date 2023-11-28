@@ -39,6 +39,7 @@ export interface TokenParams {
   age: number;
   gender: UserGender;
   authority: Authority;
+  _id: Id;
 }
 /**
  * @param {boolean} initFinish 表示是否初始化完成，一般来说，应用已启动就需要把auth配置从数据库读取到内存，以避免重复读取数据库带来的性能问题

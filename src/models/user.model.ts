@@ -8,7 +8,7 @@ export enum UserGender {
 }
 
 export interface BaseUserInfo extends BaseData<Id> {
-  username: string;
+  username?: string;
   password?: string;
   age?: number;
   gender?: UserGender;
