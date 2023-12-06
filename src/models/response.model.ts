@@ -62,3 +62,7 @@ export class DeleteResponse extends BaseResponse<{ deletedCount: number }> {
     return new BaseResponse(data, success, code);
   }
 }
+
+export interface TableListData {}
+
+export class TableDataResponse extends BaseResponse {}

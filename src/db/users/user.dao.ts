@@ -2,19 +2,22 @@ import { BaseUserInfo } from "../../models/user.model";
 import { Schema, model } from "mongoose";
 import { BaseObject } from "../../models/index.model";
 
-export const UserSchema = new Schema({
-  username: { type: String, require: true },
-  password: String,
-  age: Number,
-  gender: String,
-  authority: String,
-});
+export const UserSchema = new Schema(
+  {
+    username: { type: String, require: true },
+    password: String,
+    age: Number,
+    gender: String,
+    authority: String,
+  },
+  { timestamps: true }
+);
 
 export const userModel = model("users", UserSchema);
 
 export const UserDao = {
   async findUser(data: BaseUserInfo = {} as BaseUserInfo) {
-    const user = await userModel.find(data);
+    const user = await userModel.find(data).select(["-password"]);
     return user;
   },
   async insertUser(user: BaseUserInfo) {

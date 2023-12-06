@@ -5,6 +5,7 @@
   "main": "app.ts",
   "private": "true",
   "scripts": {
+    "start": "nodemon",
     "dev": "nodemon",
     "build": "webpack --mode=development",
     "build:dev": "webpack --mode=development",
@@ -19,6 +20,7 @@
     "bluebird": "3.5.5",
     "body-parser": "^1.20.2",
     "chalk": "^4.1.2",
+    "cookie": "^0.6.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
@@ -28,6 +30,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@types/cookie": "^0.6.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",

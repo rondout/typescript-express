@@ -5,7 +5,11 @@ import {
   TokenParams,
   isWhiteList,
 } from "../models/auth.model";
-import { BaseResponse, RespCode } from "../models/response.model";
+import {
+  BaseFailureResponse,
+  BaseResponse,
+  RespCode,
+} from "../models/response.model";
 import jwt, { VerifyErrors } from "jsonwebtoken";
 import { SECRET_KEY, parseUserFromToken } from "../utils";
 import { version } from "../config/config.json";
@@ -15,15 +19,18 @@ import {
   RequestHandler,
   Router,
   Express,
+  Request,
 } from "express";
 import { resolve } from "path";
 import { BaseObject } from "models/index.model";
 import cors from "cors";
+import cookie from "cookie";
 
 export const registCors = (app: Express) => {
   app.use(
     cors({
-      origin: ["http://localhost:3000"],
+      origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+      credentials: true,
     })
   );
 };
@@ -51,9 +58,23 @@ export const errorHandler: ErrorRequestHandler = function (
   try {
     res.status(500).send({ err: err.stack });
   } catch (error) {
+    console.log({ error });
+
     res.status(500).send(err);
   }
 };
+
+export function getTokenFromRequest(req: Request) {
+  try {
+    // 这里我们从两个地方获取token  一个是cookie   另一个是header带来的 （因为服务端渲染暂时只能从header里面把cookie带过来）
+    const parsedCookie = cookie.parse(req.headers.cookie);
+    const token = parsedCookie.token || (req.headers.token as string);
+    return token;
+  } catch (error) {
+    const token = req.headers.token as string;
+    return token;
+  }
+}
 
 /**
  *
@@ -64,13 +85,21 @@ export const errorHandler: ErrorRequestHandler = function (
  * @description 登录认证handler
  */
 export const authHandler: RequestHandler = async (req, res, next) => {
-  const token = req.headers[HEADER_TOKEN_KEY.toLowerCase()] as string;
   if (isWhiteList(req.url)) {
     next();
     return;
   }
+  const token = getTokenFromRequest(req);
   if (!token) {
-    res.status(RespCode.UNAUTHORIZED).send("Unauthorized");
+    res
+      .status(RespCode.UNAUTHORIZED)
+      .send(
+        new BaseResponse(
+          { errMsg: "Unauthorized" },
+          false,
+          RespCode.UNAUTHORIZED
+        )
+      );
   } else {
     try {
       await parseUserFromToken(token);
@@ -91,6 +120,7 @@ export const authHandler: RequestHandler = async (req, res, next) => {
 
 export const mainHandler: RequestHandler = (req, res, next) => {
   res.setHeader("x-version", version);
+  res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
 };
 

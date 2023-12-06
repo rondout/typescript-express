@@ -36,8 +36,9 @@ const authService = {
     const auths = await AuthDao.queryAuth();
     return new BaseResponse(auths);
   },
-  async getCurrentInfo(token: string) {
+  async getCurrentInfo(token: string, a) {
     try {
+      console.log({ a, token });
       const tokenInfo = await parseUserFromToken(token);
       const users = await UserDao.findUser({ _id: tokenInfo._id });
       const user = users && users[0];

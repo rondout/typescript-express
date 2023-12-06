@@ -40,3 +40,18 @@ export interface LoginParams extends BaseObject {
   username: string;
   password: string;
 }
+
+// 用户动态枚举
+export enum UserActions {
+  PUBLIC_ARTICLE = "PUBLIC_ARTICLE",
+  REGISTER = "REGISTER",
+}
+// 用户action 数据结构
+export interface UserActionInfo extends BaseData {
+  action?: UserActions;
+  user_id?: Id;
+}
+
+export class UserActionFactory implements UserActionInfo {
+  constructor(public action: UserActions, public user_id: Id) {}
+}
