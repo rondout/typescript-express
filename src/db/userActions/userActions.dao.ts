@@ -1,14 +1,12 @@
 import { UserActionInfo } from "../../models/user.model";
 import { Schema, model } from "mongoose";
-import { BaseObject } from "../../models/index.model";
-import { ObjectId, Timestamp } from "mongodb";
-import { BaseResponse } from "models/response.model";
+import { PageLink } from "../../models/response.model";
+import { PageParamsInterface } from "../../models/db.model";
 
 export const UserActionSchema = new Schema(
   {
     user_id: { type: Schema.Types.ObjectId, ref: "users" },
     action: String,
-    // date: Date,
   },
   // { timestamps: { createdAt: true } }
   { timestamps: true }
@@ -18,11 +16,23 @@ export const userActionModel = model("user_actions", UserActionSchema);
 
 export const UserActionDao = {
   async findUserAction(data: UserActionInfo = {} as UserActionInfo) {
-    const action = await userActionModel.find(data).populate({
+    const actions = await userActionModel.find(data).populate({
       path: "user_id",
       select: "-password",
     });
-    return new BaseResponse();
+    return actions;
+  },
+  async findUserActionList(params: PageParamsInterface) {
+    console.log(params);
+
+    const queryFn = userActionModel
+      .find(params.queryArgs)
+      .populate("user_id", ["-password"])
+      .skip(params.skip)
+      .limit(params.limit);
+    const actions = await queryFn;
+    const total = await userActionModel.find(params.queryArgs).countDocuments();
+    return { actions, total };
   },
   async insertUserAction(action: UserActionInfo) {
     const result = await userActionModel.insertMany([action]);

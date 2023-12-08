@@ -45,6 +45,7 @@ export interface LoginParams extends BaseObject {
 export enum UserActions {
   PUBLIC_ARTICLE = "PUBLIC_ARTICLE",
   REGISTER = "REGISTER",
+  LOGIN = "LOGIN",
 }
 // 用户action 数据结构
 export interface UserActionInfo extends BaseData {

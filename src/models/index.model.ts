@@ -1,6 +1,7 @@
 import { ObjectId } from "mongoose";
+import mongodb from "mongodb";
 
-export type Id = string | number | ObjectId;
+export type Id = string | number | ObjectId | mongodb.ObjectId;
 
 export interface BaseObject {
   [propName: string]: any;

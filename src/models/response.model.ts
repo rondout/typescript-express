@@ -1,5 +1,38 @@
 import { DeleteResult } from "mongodb";
 import { ErrorCode } from "./error.model";
+import { BaseData, Id } from "./index.model";
+
+export const MAX_SAFE_PAGE_SIZE = 2147483647;
+
+// 分页查询参数
+export interface PageLinkInterface {
+  page: number;
+  size: number;
+  [propName: string]: any;
+}
+
+// 分页查询类
+export class PageLink<T extends Record<string, any> = Record<string, any>>
+  implements PageLinkInterface
+{
+  constructor(
+    public page: number = 1,
+    public size: number = MAX_SAFE_PAGE_SIZE,
+    rest?: T
+  ) {
+    try {
+      // 如果有传入其它参数  也挂载为实例的属性
+      if (rest && typeof rest === "object")
+        Object.entries(rest).forEach(([key, value]) => {
+          this[key] = value === value;
+        });
+    } catch (error) {}
+  }
+
+  public resetPage(page = 1) {
+    this.page = page;
+  }
+}
 
 export enum RespCode {
   SUCCESS = 200,
@@ -24,8 +57,8 @@ export class BaseFailureResponse extends BaseResponse<{
   errCode: ErrorCode;
   errMsg: string;
 }> {
-  constructor(errCode: ErrorCode, errMsg?: string) {
-    super({ errCode, errMsg }, false, RespCode.FAILED);
+  constructor(errCode: ErrorCode, errMsg?: string, respCode = RespCode.FAILED) {
+    super({ errCode, errMsg }, false, respCode);
   }
 }
 
@@ -63,6 +96,23 @@ export class DeleteResponse extends BaseResponse<{ deletedCount: number }> {
   }
 }
 
-export interface TableListData {}
-
-export class TableDataResponse extends BaseResponse {}
+export interface TableListData<T extends BaseData<Id>> {
+  current: number;
+  size: number;
+  total: number;
+  records: T[];
+}
+export class TableDataResponse<
+  T extends BaseData = BaseData
+> extends BaseResponse<TableListData<T>> {
+  constructor(
+    current: number,
+    size: number,
+    total: number,
+    records: T[],
+    public success: boolean = true,
+    public code = RespCode.SUCCESS
+  ) {
+    super({ current: current + 1, size, total, records }, success, code);
+  }
+}

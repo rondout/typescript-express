@@ -29,7 +29,12 @@ import cookie from "cookie";
 export const registCors = (app: Express) => {
   app.use(
     cors({
-      origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+      origin: [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://192.168.31.150:3000",
+      ],
+      // origin: "*",
       credentials: true,
     })
   );
@@ -86,6 +91,7 @@ export function getTokenFromRequest(req: Request) {
  */
 export const authHandler: RequestHandler = async (req, res, next) => {
   if (isWhiteList(req.url)) {
+    console.log("yes");
     next();
     return;
   }
