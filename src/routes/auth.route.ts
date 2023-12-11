@@ -9,7 +9,8 @@ authRouter.post("/login", async (req, res) => {
   const result = await authService.login(req.body);
   try {
     const cookieResp = cookie.serialize("token", result.data.token, {
-      expires: new Date("9999-12-30"),
+      // expires: new Date("9999-12-30"),
+      maxAge: 2 * 24 * 60 * 60, // 过期时间（单位：秒）为两天
       sameSite: "none",
       secure: true,
     });
