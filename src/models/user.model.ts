@@ -46,13 +46,19 @@ export enum UserActions {
   PUBLIC_ARTICLE = "PUBLIC_ARTICLE",
   REGISTER = "REGISTER",
   LOGIN = "LOGIN",
+  LOG_OUT = "LOG_OUT",
 }
 // 用户action 数据结构
 export interface UserActionInfo extends BaseData {
   action?: UserActions;
+  success?: boolean;
   user_id?: Id;
 }
 
 export class UserActionFactory implements UserActionInfo {
-  constructor(public action: UserActions, public user_id: Id) {}
+  constructor(
+    public action: UserActions,
+    public success = true,
+    public user_id: Id
+  ) {}
 }

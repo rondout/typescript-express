@@ -29,6 +29,7 @@ export const UserActionDao = {
       .find(params.queryArgs)
       .populate("user_id", ["-password"])
       .skip(params.skip)
+      .sort({ createdAt: -1 })
       .limit(params.limit);
     const actions = await queryFn;
     const total = await userActionModel.find(params.queryArgs).countDocuments();

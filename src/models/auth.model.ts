@@ -17,7 +17,7 @@ export class LoginResult<T = any> extends BaseResponse<T> {
   }
 }
 
-export const WHITE_LIST_ROUTES = ["/api/auth/login"];
+export const WHITE_LIST_ROUTES = ["/api/auth/login", "/api/auth/logout"];
 
 export const isWhiteList = (route: string) => {
   // 应该用path-to-regexp来匹配路由才对，后续加上

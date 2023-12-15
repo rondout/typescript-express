@@ -1,5 +1,14 @@
 import jwt from "jsonwebtoken";
 import { TokenParams } from "../models/auth.model";
+import { Request } from "express";
+import {
+  UserActionFactory,
+  UserActionInfo,
+  UserActions,
+} from "../models/user.model";
+import { getTokenFromRequest } from "../routes/handlers";
+import { getUserInfoFromToken } from "./user.utils";
+import userActionService from "../services/userAction.service";
 
 export const SECRET_KEY = "hanshufei_secret_key";
 
@@ -29,4 +38,21 @@ export function parseUserFromToken(token: string): Promise<TokenParams> {
       }
     });
   });
+}
+
+// 处理用户操作
+export class UserActionController {
+  public static async saveUserAction(
+    req: Request,
+    action: UserActions,
+    success = true
+  ) {
+    try {
+      const token = getTokenFromRequest(req);
+      const user = await parseUserFromToken(token);
+      return await userActionService.saveAction(
+        new UserActionFactory(action, success, user?._id)
+      );
+    } catch (error) {}
+  }
 }

@@ -22,7 +22,7 @@ import {
   Request,
 } from "express";
 import { resolve } from "path";
-import { BaseObject } from "models/index.model";
+import { BaseObject } from "../models/index.model";
 import cors from "cors";
 import cookie from "cookie";
 

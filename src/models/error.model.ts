@@ -1,5 +1,6 @@
 export enum ErrorCode {
   CEATE_USER_EXISTED = "0001",
   LOGIN_RESULT = "0002",
+  LOGOUT_RESULT = "0003",
   SERVER_ERROR = "0004",
 }

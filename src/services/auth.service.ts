@@ -1,14 +1,20 @@
-import { BaseUserInfo, LoginParams } from "../models/user.model";
+import {
+  BaseUserInfo,
+  LoginParams,
+  UserActionFactory,
+  UserActions,
+} from "../models/user.model";
 import { Authority, LoginResult } from "../models/auth.model";
 import { UserDao } from "../db/users/user.dao";
-import { generateToken, parseUserFromToken } from "../utils";
-import { AuthDao } from "../db/config/auth.dao";
 import {
-  BaseFailureResponse,
-  BaseResponse,
-  RespCode,
-} from "../models/response.model";
+  UserActionController,
+  generateToken,
+  parseUserFromToken,
+} from "../utils";
+import { AuthDao } from "../db/config/auth.dao";
+import { BaseFailureResponse, BaseResponse } from "../models/response.model";
 import { ErrorCode } from "../models/error.model";
+import { Request } from "express";
 
 const authService = {
   /**
@@ -16,7 +22,8 @@ const authService = {
    * @param data 登录参数
    * @returns {LoginResult} 登录结果
    */
-  async login(data: LoginParams): Promise<LoginResult> {
+  async login(req: Request): Promise<LoginResult> {
+    const data: LoginParams = req.body;
     if (!data.password || !data.username) {
       return new LoginResult(null);
     }
@@ -25,6 +32,8 @@ const authService = {
     if (user) {
       const { username, age, gender, authority = Authority.USER, _id } = user;
       const token = generateToken({ username, age, gender, authority, _id });
+      // 记录用户的登录操作到数据库
+      UserActionController.saveUserAction(req, UserActions.LOGIN, true);
       return new LoginResult({ token });
     }
     return new BaseFailureResponse(
@@ -36,9 +45,8 @@ const authService = {
     const auths = await AuthDao.queryAuth();
     return new BaseResponse(auths);
   },
-  async getCurrentInfo(token: string, a) {
+  async getCurrentInfo(token: string) {
     try {
-      console.log({ a, token });
       const tokenInfo = await parseUserFromToken(token);
       const users = await UserDao.findUser({ _id: tokenInfo._id });
       const user = users && users[0];

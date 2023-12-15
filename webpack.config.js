@@ -2,7 +2,6 @@
 const path = require("path");
 
 const isProduction = process.env.NODE_ENV == "production";
-
 const config = {
   entry: "./app.ts",
   output: {
@@ -25,6 +24,9 @@ const config = {
     ],
   },
   resolve: {
+    alias: {
+      services: path.resolve(__dirname, "src/services/"),
+    },
     extensions: [".tsx", ".ts", ".jsx", ".js", "..."],
   },
 };
