@@ -26,13 +26,17 @@ export class UserFactory implements BaseUserInfo {
   ) {}
 
   public get userInfo(): BaseUserInfo {
-    const { username, password, age, gender, _id, authority } = this;
+    const { username, password, age, gender, _id = null, authority } = this;
     return { username, password, age, gender, _id, authority };
   }
 
   public async insertToDb() {
-    const insertResult = await UserDao.insertUser(this.userInfo);
-    console.log("user插入到数据库成功", insertResult);
+    try {
+      const insertResult = await UserDao.insertUser(this.userInfo);
+      console.log("user插入到数据库成功", insertResult);
+    } catch (error) {
+      console.log("插入用户失败", this.userInfo, error);
+    }
   }
 }
 

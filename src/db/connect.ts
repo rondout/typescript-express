@@ -20,7 +20,10 @@ export class DbConnection {
   // 链接数据库
   private async connectDb() {
     try {
-      this.mongoose = await mongoose.connect(this.dbPath);
+      this.mongoose = await mongoose.connect(this.dbPath, {
+        // user: "admin",
+        // pass: "administrator",
+      });
       console.log("数据库连接成功");
     } catch (err) {
       try {
@@ -40,6 +43,7 @@ export class DbConnection {
         18,
         UserGender.MALE,
         Authority.USER,
+        undefined,
         "root"
       ).insertToDb();
     }
