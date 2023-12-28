@@ -35,7 +35,7 @@ const authService = {
       const { username, age, gender, authority = Authority.USER, _id } = user;
       const token = generateToken({ username, age, gender, authority, _id });
       // 记录用户的登录操作到数据库
-      UserActionController.saveUserAction(req, UserActions.LOGIN, true);
+      UserActionController.saveUserAction(req, UserActions.LOGIN, true, user);
       return new LoginResult({ token });
     }
     return new BaseFailureResponse(

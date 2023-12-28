@@ -2,12 +2,11 @@ import jwt from "jsonwebtoken";
 import { TokenParams } from "../models/auth.model";
 import { Request } from "express";
 import {
+  BaseUserInfo,
   UserActionFactory,
-  UserActionInfo,
   UserActions,
 } from "../models/user.model";
 import { getTokenFromRequest } from "../routes/handlers";
-import { getUserInfoFromToken } from "./user.utils";
 import userActionService from "../services/userAction.service";
 
 export const SECRET_KEY = "hanshufei_secret_key";
@@ -45,12 +44,17 @@ export class UserActionController {
   public static async saveUserAction(
     req: Request,
     action: UserActions,
-    success = true
+    success = true,
+    user?: BaseUserInfo
   ) {
     try {
-      console.log("保存用户操作");
       const token = getTokenFromRequest(req);
-      const user = await parseUserFromToken(token);
+      console.log("保存用户操作", token, req.headers.cookie, req.headers.token);
+      if (!user) {
+        try {
+          user = await parseUserFromToken(token);
+        } catch (error) {}
+      }
       return await userActionService.saveAction(
         new UserActionFactory(action, success, user?._id)
       );
