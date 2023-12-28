@@ -48,11 +48,14 @@ export class UserActionController {
     success = true
   ) {
     try {
+      console.log("保存用户操作");
       const token = getTokenFromRequest(req);
       const user = await parseUserFromToken(token);
       return await userActionService.saveAction(
         new UserActionFactory(action, success, user?._id)
       );
-    } catch (error) {}
+    } catch (error) {
+      console.log("保存用户操作失败", error);
+    }
   }
 }

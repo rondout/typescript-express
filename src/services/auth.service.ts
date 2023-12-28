@@ -29,6 +29,8 @@ const authService = {
     }
     const users = await UserDao.matchUser(data);
     const user = (users && users[0]) as any as BaseUserInfo;
+    console.log("登录用户", user);
+
     if (user) {
       const { username, age, gender, authority = Authority.USER, _id } = user;
       const token = generateToken({ username, age, gender, authority, _id });
