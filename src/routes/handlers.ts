@@ -28,14 +28,25 @@ import cookie from "cookie";
 
 export const registCors = (app: Express) => {
   app.use(
+    // cors({
+    //   origin: [
+    //     // "http://localhost:3000",
+    //     "http://127.0.0.1:3000",
+    //     // "http://192.168.31.150:3000",
+    //     "http://47.109.68.234:3000",
+    //   ],
+    //   // origin: "*",
+    //   credentials: true,
+    // })
     cors({
-      origin: [
-        // "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        // "http://192.168.31.150:3000",
-        "http://47.109.68.234:3000",
-      ],
-      // origin: "*",
+      origin: new RegExp("^http"),
+      // origin(requestOrigin, callback) {
+      //   console.log(requestOrigin, callback);
+      //   callback(null, true);
+      // },
+      // methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+      // preflightContinue: false,
+      // optionsSuccessStatus: 204,
       credentials: true,
     })
   );
