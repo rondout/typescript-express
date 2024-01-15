@@ -85,7 +85,9 @@ export function getTokenFromRequest(req: Request) {
   try {
     // 这里我们从两个地方获取token  一个是cookie   另一个是header带来的 （因为服务端渲染暂时只能从header里面把cookie带过来）
     const parsedCookie = cookie.parse(req.headers.cookie);
-    const token = parsedCookie.token || (req.headers.token as string);
+    const token =
+      parsedCookie.token ||
+      (req.headers[HEADER_TOKEN_KEY.toLowerCase()] as string);
     return token;
   } catch (error) {
     const token = req.headers.token as string;
@@ -123,6 +125,8 @@ export const authHandler: RequestHandler = async (req, res, next) => {
       await parseUserFromToken(token);
       next();
     } catch (error: any) {
+      console.log({ error });
+
       res
         .status(RespCode.UNAUTHORIZED)
         .send(
@@ -173,7 +177,8 @@ export const permissionHandler: PermissionHandler = (
   next,
   authorities = All_AUTHORITY
 ) => {
-  const token = req.headers[HEADER_TOKEN_KEY.toLowerCase()] as string;
+  const token = getTokenFromRequest(req);
+  //  req.headers[HEADER_TOKEN_KEY.toLowerCase()] as string;
   jwt.verify(token, SECRET_KEY, function (err, decoded) {
     const tokenParams = decoded as TokenParams;
     if (authorities.includes(tokenParams.authority)) {

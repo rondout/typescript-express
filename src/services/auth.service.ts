@@ -15,6 +15,7 @@ import { AuthDao } from "../db/config/auth.dao";
 import { BaseFailureResponse, BaseResponse } from "../models/response.model";
 import { ErrorCode } from "../models/error.model";
 import { Request } from "express";
+import { getTokenFromRequest } from "../routes/handlers";
 
 const authService = {
   /**
@@ -24,6 +25,8 @@ const authService = {
    */
   async login(req: Request): Promise<LoginResult> {
     const data: LoginParams = req.body;
+    console.log(req.body);
+
     if (!data.password || !data.username) {
       return new LoginResult(null);
     }
@@ -47,15 +50,16 @@ const authService = {
     const auths = await AuthDao.queryAuth();
     return new BaseResponse(auths);
   },
-  async getCurrentInfo(token: string) {
+  async getCurrentInfo(req: Request) {
     try {
+      const token = getTokenFromRequest(req);
       const tokenInfo = await parseUserFromToken(token);
       const users = await UserDao.findUser({ _id: tokenInfo._id });
       const user = users && users[0];
       if (user) {
         return new BaseResponse(user);
       }
-      throw new Error();
+      // throw new Error();
     } catch (error) {
       return new BaseFailureResponse(
         ErrorCode.SERVER_ERROR,

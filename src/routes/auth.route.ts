@@ -1,6 +1,5 @@
 import { Router } from "express";
 import authService from "../services/auth.service";
-import { getTokenFromRequest } from "./handlers";
 import cookie from "cookie";
 import { BaseFailureResponse, BaseResponse } from "../models/response.model";
 import { ErrorCode } from "../models/error.model";
@@ -37,8 +36,7 @@ authRouter.get("/", async (req, res) => {
 });
 
 authRouter.get("/current", async (req, res) => {
-  const token = getTokenFromRequest(req);
-  const result = await authService.getCurrentInfo(token);
+  const result = await authService.getCurrentInfo(req);
   res.send(result);
 });
 

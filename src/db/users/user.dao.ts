@@ -4,19 +4,26 @@ import { BaseObject } from "../../models/index.model";
 
 export const UserSchema = new Schema(
   {
+    // 用户名
     username: { type: String, require: true },
+    // 密码
     password: String,
+    // 年龄
     age: Number,
+    // 性别
     gender: String,
+    // 权限角色
     authority: String,
   },
+  // 数据库日期记录
   { timestamps: true }
 );
 
-export const userModel = model("users", UserSchema);
+export const userModel = model<BaseUserInfo>("users", UserSchema);
 
 export const UserDao = {
   async findUser(data: BaseUserInfo = {} as BaseUserInfo) {
+    // 查询的时候肯定不能查询出密码字段的  需要过滤掉
     const user = await userModel.find(data).select(["-password"]);
     return user;
   },

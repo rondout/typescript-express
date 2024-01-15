@@ -23,8 +23,6 @@ export const UserActionDao = {
     return actions;
   },
   async findUserActionList(params: PageParamsInterface) {
-    console.log(params);
-
     const queryFn = userActionModel
       .find(params.queryArgs)
       .populate("user_id", ["-password"])
