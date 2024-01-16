@@ -12,7 +12,7 @@ export const UserActionSchema = new Schema(
   { timestamps: true }
 );
 
-export const userActionModel = model("user_actions", UserActionSchema);
+export const userActionModel = model<UserActionInfo>("user_actions", UserActionSchema);
 
 export const UserActionDao = {
   async findUserAction(data: UserActionInfo = {} as UserActionInfo) {

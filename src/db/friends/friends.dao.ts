@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import { Id } from "../../models/index.model";
 import { PageParams } from "../../models/db.model";
+import { FriendsRelationInfo } from "../../models/friends.model";
 
 export const FriendsSchema = new Schema(
   {
@@ -10,13 +11,31 @@ export const FriendsSchema = new Schema(
   { timestamps: true, versionKey: false }
 );
 
-export const friendsModel = model("friends", FriendsSchema);
+export const friendsModel = model<FriendsRelationInfo>(
+  "friends",
+  FriendsSchema
+);
 
 export const friendsDao = {
-  async findAllFriends(params: { id: Id }) {
-    return friendsModel.find({ $or: [{ from: params.id }, { to: params.id }] });
+  // 通过Id获取所有的朋友关系
+  async findAllFriends(_id: Id) {
+    return friendsModel
+      .find({ $or: [{ from: _id }, { to: _id }] })
+      .populate({
+        path: "from",
+        select: ["username", "age", "gender", "authority"],
+      })
+      .populate({
+        path: "to",
+        select: ["username", "age", "gender", "authority"],
+      });
   },
+  // 通过Id 分页 获取所有的朋友关系
   async findAllFriendByPage(params: PageParams<{ id: Id }>) {
     return friendsModel.find({ from: params.queryArgs.id });
+  },
+  // 创建朋友关系
+  async insertFriend(params: FriendsRelationInfo[]) {
+    return friendsModel.insertMany(params);
   },
 };

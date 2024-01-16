@@ -1,6 +1,6 @@
 import { BaseUserInfo } from "../../models/user.model";
 import { Schema, model } from "mongoose";
-import { BaseObject } from "../../models/index.model";
+import { BaseObject, Id } from "../../models/index.model";
 
 export const UserSchema = new Schema(
   {
@@ -41,5 +41,8 @@ export const UserDao = {
   },
   async matchUser<T extends BaseObject = any>(query: T) {
     return await userModel.find(query);
+  },
+  async findById(_id: Id) {
+    return await userModel.findById(_id);
   },
 };

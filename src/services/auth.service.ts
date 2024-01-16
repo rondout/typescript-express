@@ -50,7 +50,7 @@ const authService = {
     const auths = await AuthDao.queryAuth();
     return new BaseResponse(auths);
   },
-  async getCurrentInfo(req: Request) {
+  async getCurrentInfo(req: Request):Promise<BaseResponse<BaseUserInfo>> {
     try {
       const token = getTokenFromRequest(req);
       const tokenInfo = await parseUserFromToken(token);

@@ -6,7 +6,7 @@ export const AuthSchema = new Schema({
   authorities: { type: Array<String>, require: true },
 });
 
-export const authConfigModel = model("auth_config", AuthSchema);
+export const authConfigModel = model<AuthConfigInfo>("auth_config", AuthSchema);
 
 export const AuthDao = {
   async queryAuth(query?: AuthConfigInfo) {

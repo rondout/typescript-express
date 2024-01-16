@@ -1,7 +1,10 @@
 import { Schema, model } from "mongoose";
-import { Id } from "../../models/index.model";
+import { Id, BaseData } from "../../models/index.model";
 import { PageParams } from "../../models/db.model";
-import { MakeFriendsRequestParams } from "../../models/friends.model";
+import {
+  FriendRequestInfo,
+  MakeFriendsRequestParams,
+} from "../../models/friends.model";
 
 export const FriendRequestSchema = new Schema(
   {
@@ -19,12 +22,18 @@ export const FriendRequestSchema = new Schema(
   { timestamps: true, versionKey: false }
 );
 
-export const friendRequestModel = model("friend_requests", FriendRequestSchema);
+export const friendRequestModel = model<FriendRequestInfo>(
+  "friend_requests",
+  FriendRequestSchema
+);
 
 // export interface
 
 export const friendRequestDao = {
-  async findAllFriendRequest(params?: { from?: Id; to?: Id }) {
+  async findRequestById(_id: Id) {
+    return await friendRequestModel.findById(_id);
+  },
+  async findAllFriendRequest() {
     // return friendRequestModel.find({
     //   $or: [{ from: params?.from }, { to: params?.to }],
     // });
@@ -39,6 +48,7 @@ export const friendRequestDao = {
       select: ["username", "age", "gender", "authority"],
     });
   },
+  // 查询跟某用户相关联的请求
   async findRequestAboutUserId(params: { id: Id }) {
     return await friendRequestModel
       .find({
@@ -47,10 +57,11 @@ export const friendRequestDao = {
       .populate({
         path: "from",
         select: ["username", "age", "gender", "authority"],
-      }).populate({
-      path: "to",
-      select: ["username", "age", "gender", "authority"],
-    });;
+      })
+      .populate({
+        path: "to",
+        select: ["username", "age", "gender", "authority"],
+      });
   },
   async findAllFriendByPage(params: PageParams<{ id: Id }>) {
     return await friendRequestModel.find({ from: params.queryArgs.id });
@@ -58,5 +69,9 @@ export const friendRequestDao = {
   // 创建申请
   async insertRequest(params: MakeFriendsRequestParams) {
     return await friendRequestModel.insertMany([params]);
+  },
+  // 修改
+  async updateRequest(params: BaseData) {
+    return await friendRequestModel.updateOne({_id:params._id}, params);
   },
 };
